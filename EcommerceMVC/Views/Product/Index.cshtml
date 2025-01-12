@@ -1,0 +1,72 @@
+﻿@model IEnumerable<Product>
+
+<h2>Product List</h2>
+
+<!-- Search Form -->
+<form method="get" asp-action="Search" class="mb-3">
+    <div class="row">
+        <div class="form-group col-md-6">
+            <input type="text" name="searchTerm" class="form-control" placeholder="Search for products..." />
+        </div>
+        <div class="form-group col-md-6">
+            <select name="categoryId" class="form-control">
+                <option value="">All Categories</option>
+                @foreach (var category in ViewBag.Categories as IEnumerable<Category>)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+            </select>
+        </div>
+    </div>
+  
+    <button type="submit" class="btn btn-primary mt-2">Search</button>
+</form>
+
+<table id="productTable" class="table table-striped">
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th class="col-md-4">Description</th>
+            <th>Categories</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td><img src="@product.ImageUrl" alt="@product.Name" class="img-fluid" style="width: 100px; height: 100px; object-fit: cover;" /></td>
+                <td>@product.Name</td>
+                <td>@product.Price.ToString("C")</td>
+                <td>@product.Description</td>
+                <td>
+                    @foreach (var category in product.ProductCategories.Select(pc => pc.Category))
+                    {
+                        <span class="badge bg-info">@category.Name</span>
+                    }
+                </td>
+                <td>
+                    <a href="@Url.Action("Details", "Product", new { id = product.Id })" class="btn btn-primary btn-sm">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Initialize DataTable -->
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#productTable').DataTable({
+                "dom": 'lrtip',
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "info": true
+            });
+        });
+    </script>
+
+}

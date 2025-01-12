@@ -1,0 +1,69 @@
+﻿@model List<CartItem>
+@{
+    ViewBag.Title = "Shopping Cart";
+}
+
+<h1>Shopping Cart</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductName</td>
+                <td>@item.Price</td>
+                <td>
+                    <form asp-action="UpdateQuantity" asp-controller="Cart" method="post" class="d-flex align-items-center mb-3">
+                        <input type="hidden" name="productId" value="@item.ProductId" />
+
+                        <div class="input-group me-3" style="width: 150px;">
+                            <button class="btn btn-outline-secondary" type="button" id="button-minus">-</button>
+                            <input type="number" name="quantity" class="form-control text-center" min="1" value="@item.Quantity" />
+                            <button class="btn btn-outline-secondary" type="button" id="button-plus">+</button>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+
+                </td>
+                <td>@item.TotalPrice</td>
+                <td>
+                    <a asp-action="RemoveFromCart" asp-route-productId="@item.ProductId" class="btn btn-danger">Remove</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Total: @ViewBag.TotalCost</h3>
+
+<a asp-action="Index" asp-controller="Product" class="btn btn-secondary">Continue Shopping</a>
+<a asp-action="ClearCart" class="btn btn-warning">Clear Cart</a>
+
+@section Scripts {
+
+    <script>
+        $(document).ready(function () {
+            $('#button-plus').click(function () {
+                var quantity = parseInt($('input[name="quantity"]').val());
+                $('input[name="quantity"]').val(quantity + 1);
+            });
+
+            $('#button-minus').click(function () {
+                var quantity = parseInt($('input[name="quantity"]').val());
+                if (quantity > 1) {
+                    $('input[name="quantity"]').val(quantity - 1);
+                }
+            });
+        });
+    </script>
+}
